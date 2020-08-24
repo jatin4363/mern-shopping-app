@@ -36,6 +36,9 @@ function RightMenu(props) {
     return (
       //if authenticated and logged in already then only logout
       <Menu mode={props.mode}>
+        <Menu.Item key="upload">
+          <a href="/product/upload">Upload</a>
+        </Menu.Item>
         <Menu.Item key="logout">
           <a onClick={logoutHandler}>Logout</a>
         </Menu.Item>
