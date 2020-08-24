@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 });
 
 // III) get authenticated by getting checked if the token is there or not which was generated
-app.get("/api/user/auth", auth, (req, res) => {
+app.get("/api/users/auth", auth, (req, res) => {
   res.status(200).json({
     _id: req._id,
     isAuth: true,
