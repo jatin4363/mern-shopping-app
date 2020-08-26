@@ -36,7 +36,7 @@ function UploadProductPage(props) {
   }
 
   function onContinentselectChange(event) {
-    setContinentValue(event.currentTarget.key);
+    setContinentValue(event.currentTarget.value);
   }
 
   function updateImages(newImages) {
@@ -45,7 +45,25 @@ function UploadProductPage(props) {
 
   function onSubmit(event) {
     event.preventDefault();
+
+    if (
+      // check if all the fields were field
+      !TitleValue ||
+      !DescriptionValue ||
+      !PriceValue ||
+      !Images
+    ) {
+      return alert("Fill all the fields first !");
+    }
+
+    // if (!TitleValue) alert("fill title");
+    // if (!DescriptionValue) alert("fill DescriptionValue");
+    // if (!PriceValue) alert("fill PriceValue");
+    // if (!ContinentValue) alert("fill ContinentValue");
+    // if (!Images) alert("fill Images");
+
     const variables = {
+      //object containing the data with the user info as the writer
       writer: props.user.userData._id,
       title: TitleValue,
       description: DescriptionValue,
@@ -53,6 +71,8 @@ function UploadProductPage(props) {
       images: Images,
       continents: ContinentValue,
     };
+
+    // variable object created above passed to the server with post request
     Axios.post("/api/product/uploadProduct", variables).then((response) => {
       if (response.data.success) {
         alert("Product Successfully Uploaded");
