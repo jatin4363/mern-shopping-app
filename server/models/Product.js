@@ -38,4 +38,20 @@ const productSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// this is done so that we can search for the products and the
+// results will match the search terms from name an description both
+productSchema.index(
+  {
+    name: "text",
+    description: "text",
+  },
+  {
+    //These weights denote the relative significance of the indexed fields to each othe
+    weights: {
+      title: 5,
+      description: 1,
+    },
+  }
+);
+
 module.exports = mongoose.model("Product", productSchema);

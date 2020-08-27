@@ -6,6 +6,7 @@ import CheckBox from "./Sections/CheckBox";
 import RadioBox from "./Sections/RadioBox";
 import ImageSlider from "../../utils/ImageSlider";
 import { continents, price } from "./Sections/Datas";
+import SearchFeature from "./Sections/SearchFeature";
 
 const { Meta } = Card;
 
@@ -14,6 +15,8 @@ function LandingPage() {
   const [Skip, setSkip] = useState(0);
   const [Limit, setLimit] = useState(8);
   const [PostSize, setPostSize] = useState(); //when the postSie is 8 then only we show load more button
+  const [SearchTerms, setSearchTerms] = useState("");
+
   const [Filters, setFilters] = useState({
     continents: [],
     price: [],
@@ -117,6 +120,21 @@ function LandingPage() {
     setSkip(0);
   }
 
+  function updateSearchTerms(newSearchTerm) {
+    setSearchTerms(newSearchTerm);
+
+    const variables = {
+      skip: 0,
+      limit: Limit,
+      filters: Filters,
+      searchTerm: newSearchTerm,
+    };
+
+    setSkip(0); //since when we type somthing int the search bar we need to get the cards from skip 0
+
+    getProducts(variables);
+  }
+
   return (
     <div style={{ width: "75%", margin: "3rem auto" }}>
       <div style={{ textAlign: "center" }}>
@@ -144,6 +162,15 @@ function LandingPage() {
       </Row>
 
       {/* Search  */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          margin: "1rem auto",
+        }}
+      >
+        <SearchFeature refreshFunction={updateSearchTerms} />
+      </div>
 
       {Products.length === 0 ? (
         <div
