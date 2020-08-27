@@ -3,8 +3,9 @@ import Axios from "axios";
 import { RocketOutlined } from "@ant-design/icons";
 import { Col, Card, Row } from "antd";
 import CheckBox from "./Sections/CheckBox";
-
+import RadioBox from "./Sections/RadioBox";
 import ImageSlider from "../../utils/ImageSlider";
+import { continents, price } from "./Sections/Datas";
 
 const { Meta } = Card;
 
@@ -73,12 +74,32 @@ function LandingPage() {
     );
   });
 
+  function handlePrice(value) {
+    //we need this function in order to get range of real numbers corresponding to the filter selected
+    const data = price;
+    let array = [];
+
+    for (let key in data) {
+      // console.log("key", key);
+      // console.log("value", value);
+      if (data[key]._id === parseInt(value, 10)) {
+        array = data[key].array;
+      }
+    }
+    return array;
+  }
+
   function handleFilters(filters, category) {
+    // console.log(filters);
+
     const newFilters = { ...Filters };
+    // console.log(newFilters);
 
     newFilters[category] = filters; //like newFilters[continents] = [2,3,5,1]
 
     if (category === "price") {
+      let priceValues = handlePrice(filters);
+      newFilters[category] = priceValues;
     }
 
     showFilteredResults(newFilters);
@@ -106,11 +127,21 @@ function LandingPage() {
       </div>
 
       {/* Filter  */}
-      <CheckBox
-        handleFilters={(filters) => {
-          handleFilters(filters, "continents");
-        }}
-      />
+
+      <Row gutter={[16, 16]}>
+        <Col lg={12} xs={24}>
+          <CheckBox
+            list={continents}
+            handleFilters={(filters) => handleFilters(filters, "continents")}
+          />
+        </Col>
+        <Col lg={12} xs={24}>
+          <RadioBox
+            list={price}
+            handleFilters={(filters) => handleFilters(filters, "price")}
+          />
+        </Col>
+      </Row>
 
       {/* Search  */}
 

@@ -58,18 +58,23 @@ router.post("/getProducts", (req, res) => {
   let limit = req.body.limit ? parseInt(req.body.limit) : 100;
   let skip = parseInt(req.body.skip);
 
-
   // preparing findArgs object for price and continents filter
   let findArgs = {};
 
   for (let key in req.body.filters) {
     if (req.body.filters[key].length > 0) {
       if (key === "price") {
+        findArgs[key] = {
+          $gte: req.body.filters[key][0], //greater than equal
+          $lte: req.body.filters[key][1], //less than equal
+        };
       } else {
         findArgs[key] = req.body.filters[key];
       }
     }
   }
+
+  // console.log(findArgs);//[0] { continents: [ 5, 4 ], price: { '$gte': 400, '$lte': 499 } }
 
   //here mongoDB will search suitable matches based on the consitions defined above
   Product.find(findArgs)

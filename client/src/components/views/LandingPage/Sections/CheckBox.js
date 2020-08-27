@@ -3,37 +3,6 @@ import { Checkbox, Collapse } from "antd";
 
 const { Panel } = Collapse;
 
-const continents = [
-  {
-    _id: 1,
-    name: "Asia",
-  },
-  {
-    _id: 2,
-    name: "Europe",
-  },
-  {
-    _id: 3,
-    name: "Africa",
-  },
-  {
-    _id: 4,
-    name: "North America",
-  },
-  {
-    _id: 5,
-    name: "South America",
-  },
-  {
-    _id: 6,
-    name: "Australia",
-  },
-  {
-    _id: 7,
-    name: "Antarctica",
-  },
-];
-
 function CheckBox(props) {
   const [Checked, setChecked] = useState([]);
 
@@ -56,17 +25,20 @@ function CheckBox(props) {
   }
 
   function renderCheckboxLists() {
-    return continents.map((value, index) => (
-      <React.Fragment key={index}>
-        <Checkbox
-          onChange={() => handleToggle(value._id)}
-          type="checkbox"
-          checked={Checked.indexOf(value._id) === -1 ? false : true}
-        />
+    return (
+      props.list &&
+      props.list.map((value, index) => (
+        <React.Fragment key={index}>
+          <Checkbox
+            onChange={() => handleToggle(value._id)}
+            type="checkbox"
+            checked={Checked.indexOf(value._id) === -1 ? false : true}
+          />
 
-        <span>{value.name}</span>
-      </React.Fragment>
-    ));
+          <span>{value.name}</span>
+        </React.Fragment>
+      ))
+    );
   }
 
   return (
