@@ -107,4 +107,23 @@ router.post("/getProducts", (req, res) => {
   }
 });
 
+// `api/product/products_by_id?id=${id}&type=single`
+// type single since sending only one product id
+// it'd have been type=array if lots of products have to be passed
+router.get("/products_by_id", (req, res) => {
+  let type = req.query.type;
+  let productIds = req.query.id;
+
+  if (type === "array") {
+  }
+  // now we get info of the product that belong to product id
+
+  Product.find({ _id: { $in: productIds } })
+    .populate("writer")
+    .exec((err, product) => {
+      if (err) return res.status(400).send(err);
+      return res.status(200).send(product);
+    });
+});
+
 module.exports = router;
