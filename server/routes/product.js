@@ -114,10 +114,17 @@ router.get("/products_by_id", (req, res) => {
   let type = req.query.type;
   let productIds = req.query.id;
 
+  // here is array of ids to b searched for
   if (type === "array") {
+    let ids = req.query.id.split(",");
+    productIds = [];
+    productIds = ids.map((item) => {
+      return item;
+    });
   }
   // now we get info of the product that belong to product id
 
+  // here is only single id search
   Product.find({ _id: { $in: productIds } })
     .populate("writer")
     .exec((err, product) => {

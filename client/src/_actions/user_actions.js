@@ -1,5 +1,13 @@
 import axios from "axios";
-import { LOGIN_USER, REGISTER_USER, AUTH_USER, LOGOUT_USER } from "./types";
+import {
+  LOGIN_USER,
+  REGISTER_USER,
+  AUTH_USER,
+  LOGOUT_USER,
+  ADD_TO_CART_USER,
+  GET_CART_ITEMS_USER,
+  REMOVE_CART_ITEM_USER,
+} from "./types";
 import { USER_SERVER } from "../components/Config.js";
 
 export function registerUser(dataToSubmit) {
@@ -42,6 +50,64 @@ export function logoutUser() {
 
   return {
     type: LOGOUT_USER,
+    payload: request,
+  };
+}
+export function addToCart(_id) {
+  const request = axios
+    .get(`${USER_SERVER}/addToCart?productId=${_id}`)
+    .then((response) => response.data);
+
+  return {
+    type: ADD_TO_CART_USER,
+    payload: request, //this is added to user_reducer.js action.payload for ADD_TO_CART_USER
+  };
+}
+
+export function getCartItems(cartItems, userCart) {
+  const request = axios
+    .get(`/api/product/products_by_id?id=${cartItems}&type=array`) //since in the cartItems array we have all the ids
+    .then((response) => {
+      userCart.forEach((cartItem) => {
+        response.data.forEach((productDetail, i) => {
+          if (cartItem.id === productDetail._id) {
+            response.data[i].quantity = cartItem.quantity;
+          }
+        });
+      });
+
+      return response.data;
+    });
+
+  // make card details inside redux store
+  // we need quantity data to product information that come from product Collection
+
+  return {
+    type: GET_CART_ITEMS_USER,
+    payload: request,
+  };
+}
+
+export function removeCartItem(id) {
+  const request = axios
+    .get(`/api/users/removeFromCart?_id=${id}`) //since in the cartItems array we have all the ids
+    .then((response) => {
+      response.data.cart.forEach((item) => {
+        response.data.cartDetail.forEach((k, i) => {
+          if (item.id === k._id) {
+            response.data.cartDetail[i].quantity = item.quantity;
+          }
+        });
+      });
+
+      return response.data;
+    });
+
+  // make card details inside redux store
+  // we need quantity data to product information that come from product Collection
+
+  return {
+    type: REMOVE_CART_ITEM_USER,
     payload: request,
   };
 }
