@@ -22,7 +22,7 @@ function NavBar() {
       style={{ position: "fixed", zIndex: 5, width: "100%" }}
     >
       <div className="menu__logo">
-        <a href="/">Logo</a>
+        <a href="/">World Shop</a>
       </div>
       <div className="menu__container">
         <div className="menu_left">
@@ -39,7 +39,7 @@ function NavBar() {
           <AlignRightOutlined />
         </Button>
         <Drawer
-          title="Basic Drawer"
+          title="Options"
           placement="right"
           className="menu_drawer"
           closable={false}

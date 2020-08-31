@@ -18,7 +18,7 @@ function ProductInfo(props) {
       <Descriptions title="Product Info">
         <Descriptions.Item label="Price"> {Product.price}</Descriptions.Item>
         <Descriptions.Item label="Sold">{Product.sold}</Descriptions.Item>
-        <Descriptions.Item label="View"> {Product.views}</Descriptions.Item>
+        <Descriptions.Item label="View"> {Product.views}</Descriptions.Item> 
         <Descriptions.Item label="Description">
           {" "}
           {Product.description}

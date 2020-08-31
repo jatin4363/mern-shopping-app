@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Menu, Badge } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined, UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { USER_SERVER } from "../../../Config";
 import { withRouter } from "react-router-dom";
@@ -37,13 +37,18 @@ function RightMenu(props) {
     return (
       //if authenticated and logged in already then only logout
       <Menu mode={props.mode}>
+        <Menu.Item key="history">
+          <a href="/history">History</a>
+        </Menu.Item>
         <Menu.Item key="upload">
-          <a href="/product/upload">Upload</a>
+          <a href="/product/upload" style={{ color: "#667777" }}>
+            <UploadOutlined style={{ fontSize: 30 }} />
+          </a>
         </Menu.Item>
         <Menu.Item key="cart" style={{ paddingBottom: 3 }}>
           <Badge count={user.userData && user.userData.cart.length}>
             <a href="/user/cart" style={{ marginRight: -22, color: "#667777" }}>
-              <ShoppingCartOutlined style={{ fontSize: 30, marginBottom: 3 }} />
+              <ShoppingCartOutlined style={{ fontSize: 30}} />
             </a>
           </Badge>
         </Menu.Item>
