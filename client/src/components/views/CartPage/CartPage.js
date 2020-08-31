@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getCartItems, removeCartItem } from "../../../_actions/user_actions";
+import {
+  getCartItems,
+  removeCartItem,
+  onSuccessBuy,
+} from "../../../_actions/user_actions";
 import UserCardBlock from "./Sections/UserCardBlock";
 import { Result, Empty } from "antd";
+import Paypal from "../../utils/Paypal";
 // in this page we need to have the quantity info from the user schema and price from product schema
 // so we need to have both the tables in models getting used from the DB
 
@@ -50,6 +55,28 @@ function CartPage(props) {
     });
   }
 
+  function transactionSuccess(data) {
+    dispatch(
+      onSuccessBuy({
+        cartDetail: props.user.cartDetail,
+        paymentData: data,
+      })
+    ).then((response) => {
+      if (response.payload.success) {
+        setShowSuccess(true);
+        setShowTotal(false);
+      }
+    });
+  }
+
+  function transactionError() {
+    console.log("Paypal error");
+  }
+
+  function transactionCanceled() {
+    console.log("Transaction canceled");
+  }
+
   return (
     <div style={{ width: "85%", margin: "3rem auto" }}>
       <h1>My Cart</h1>
@@ -61,7 +88,7 @@ function CartPage(props) {
 
         {ShowTotal ? (
           <div style={{ marginTop: "3rem" }}>
-            <h2>Total amount: ${Total} </h2>
+            <h2>Total amount: ₹ {Total} </h2>
           </div>
         ) : ShowSuccess ? (
           <Result status="success" title="Successfully Purchased Items" />
@@ -80,6 +107,16 @@ function CartPage(props) {
           </div>
         )}
       </div>
+
+      {/* Paypal button */}
+      {ShowTotal && (
+        <Paypal
+          toPay={Total}
+          onSuccess={transactionSuccess}
+          transactionError={transactionError}
+          transactionCanceled={transactionCanceled}
+        />
+      )}
     </div>
   );
 }

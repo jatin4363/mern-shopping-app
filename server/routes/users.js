@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const Product = require("../models/Product");
-
+const Payment = require("../models/Payment");
 const auth = require("../middleware/auth");
+const async = require("async");
 
 // III) get authenticated by getting checked if the token is there or not which was generated
 router.get("/auth", auth, (req, res) => {
@@ -148,6 +149,90 @@ router.get("/removeFromCart", auth, (req, res) => {
             cart,
           });
         });
+    }
+  );
+});
+
+router.post("/successBuy", auth, (req, res) => {
+  let history = [];
+  let transactionData = {};
+
+  // put the brief  payment info in user collection
+  req.body.cartDetail.forEach((item) => {
+    history.push({
+      dateOfPurchase: Date.now(),
+      name: item.title,
+      id: item._id,
+      price: item.price,
+      quantity: item.quantity,
+      paymentId: req.body.paymentData.paymentID,
+    });
+  });
+
+  // put payment info that come from paypal into payment collection
+  transactionData.user = {
+    id: req.user._id,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    email: req.user.email,
+  };
+
+  transactionData.data = req.body.paymentData;
+  transactionData.product = history;
+
+  User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $push: { history: history }, $set: { cart: [] } },
+    { new: true },
+    (err, user) => {
+      if (err) return res.json({ success: false, err });
+
+      const payment = new Payment(transactionData);
+      payment.save((err, doc) => {
+        if (err) return res.json({ success: false, err });
+
+        // increase the number of sold info
+
+        //first We need to know how many product were sold in this transaction for
+        // each of products
+
+        let products = [];
+        doc.product.forEach((item) => {
+          products.push({ id: item.id, quantity: item.quantity });
+        });
+
+        // first Item    quantity 2
+        // second Item  quantity 3
+
+        // when we need to just update for one item in the sold field in PRODUCT
+        // we just have to use the Product.finOneAndUpdate and then inc for incrementing
+        // but since now we have multiple products here whose solde count is to be updated
+        // so here we use eachSeries here from async
+
+        async.eachSeries(
+          products,
+          (item, callback) => {
+            Product.update(
+              { _id: item.id },
+              {
+                $inc: {
+                  sold: item.quantity,
+                },
+              },
+              { new: false },
+              callback
+            );
+          },
+          (err) => {
+            if (err) return res.json({ success: false, err });
+            res.status(200).json({
+              success: true,
+              cart: user.cart,
+              cartDetail: [],
+            });
+          }
+        );
+      });
     }
   );
 });
